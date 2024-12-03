@@ -21,12 +21,10 @@ def grab_serv_version(sock, use_ssl=False):
 # Function to scan a single port
 def scan_port(host, port):
     try:
+        # use https if port is 443: https port
         use_ssl = port == 443
-        # Create a socket object
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Set a timeout for the connection attempt
         sock.settimeout(1)
-        # Attempt to connect to the host and port
         result = sock.connect_ex((host, port))
         # If the connection was successful, the port is open
         if result == 0:
@@ -38,7 +36,6 @@ def scan_port(host, port):
             print(f"Port {port} is open (Service: {service}, Banner: {service_ver})")
         else:
             print(f"Port {port} is closed")
-        # Close the socket
         sock.close()
     except Exception as e:
         print(f"Error scanning port {port}: {e}")
@@ -73,10 +70,9 @@ def get_target_os(target):
         return f"Error detecting OS: {e}"
 
 
-# Main function
 if __name__ == "__main__":
-    target_host = socket.gethostbyname('www.megacorpone.com')  # Target IP address
-    start_port = 1  # Starting port number
-    end_port = 1000  # Ending port number
+    target_host = socket.gethostbyname('www.megacorpone.com')
+    start_port = 1
+    end_port = 1000
     scan_range(target_host, start_port, end_port)
     print(get_target_os(target_host))
