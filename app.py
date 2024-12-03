@@ -1,5 +1,8 @@
 from flask import Flask, request, jsonify
 import nmap
+import socket
+from flask import Flask, jsonify
+import threading
 
 app = Flask(__name__)
 scanner = nmap.PortScanner()
@@ -20,6 +23,6 @@ def scan():
         results = scanner.scan(hosts=target, ports=ports, arguments=args) #using nmap library to configure the scan
         return jsonify(results) #returning the results as a json object
     except Exception as e:
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
 if __name__ == '__main__':
     app.run(debug=True)
