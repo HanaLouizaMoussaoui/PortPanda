@@ -19,11 +19,15 @@ def grab_serv_version(sock, use_ssl=False):
         return f"Error grabbing banner: {e}"
 
 # Function to scan a single port
-def scan_port(host, port):
+# protocol will be obtained from form data on flask site
+def scan_port(host, port, protocol):
     try:
+        if protocol.lower() == 'udp':
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        else:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # use https if port is 443: https port
         use_ssl = port == 443
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(1)
         result = sock.connect_ex((host, port))
         # If the connection was successful, the port is open
@@ -32,20 +36,24 @@ def scan_port(host, port):
                 service = socket.getservbyport(port)
             except OSError:
                 service = "Unknown service"
-            service_ver = grab_serv_version(sock, use_ssl)
-            print(f"Port {port} is open (Service: {service}, Banner: {service_ver})")
+            if protocol.lower() == 'tcp':
+                service_ver = grab_serv_version(sock, use_ssl)
+                print(f"Port {port} ({protocol}) is open (Service: {service}, Banner: {service_ver})")
+            else:
+                if service.lower() == "unknown service":
+                    print(f"Port {port} ({protocol}) is open (Service: {service} or the port is unresponsive)")
         else:
-            print(f"Port {port} is closed")
+            print(f"Port {port} ({protocol}) is closed")
         sock.close()
     except Exception as e:
         print(f"Error scanning port {port}: {e}")
 
 # Function to scan a range of ports
-def scan_range(host, start_port, end_port):
+def scan_range(host, start_port, end_port, protocol='tcp'):
     threads = []
     for port in range(start_port, end_port + 1):
         # Create a new thread for each port scan
-        thread = threading.Thread(target=scan_port, args=(host, port))
+        thread = threading.Thread(target=scan_port, args=(host, port, protocol))
         threads.append(thread)
         thread.start()
     # Wait for all threads to complete
@@ -74,5 +82,6 @@ if __name__ == "__main__":
     target_host = socket.gethostbyname('www.megacorpone.com')
     start_port = 1
     end_port = 1000
-    scan_range(target_host, start_port, end_port)
+    scan_range(target_host, start_port, end_port, protocol='tcp')
+    scan_range(target_host, start_port, end_port, protocol='udp')
     print(get_target_os(target_host))
