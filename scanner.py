@@ -1,6 +1,8 @@
 import socket
 import ssl
 import threading
+import nmap
+
 
 def grab_serv_version(sock, use_ssl=False):
     try:
@@ -53,9 +55,28 @@ def scan_range(host, start_port, end_port):
     for thread in threads:
         thread.join()
 
+def get_target_os(target):
+    nm = nmap.PortScanner()
+
+    try:
+        results = nm.scan(target, arguments='-O')
+        os_info = {}
+        if 'osmatch' in results['scan'][target]:
+            os_match = results['scan'][target]['osmatch'][0]
+            os_info['os_name'] = os_match['name']
+            os_info['os_accuracy'] = os_match['accuracy']
+        if 'tcp' in results['scan'][target]:
+            os_info['open_ports'] = list(results['scan'][target]['tcp'].keys())
+            os_info['services'] = {port: results['scan'][target]['tcp'][port]['name'] for port in os_info['open_ports']}
+        return os_info
+    except Exception as e:
+        return f"Error detecting OS: {e}"
+
+
 # Main function
 if __name__ == "__main__":
     target_host = socket.gethostbyname('www.megacorpone.com')  # Target IP address
     start_port = 1  # Starting port number
     end_port = 1000  # Ending port number
     scan_range(target_host, start_port, end_port)
+    print(get_target_os(target_host))
