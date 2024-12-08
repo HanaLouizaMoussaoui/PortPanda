@@ -1,16 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import nmap
 import socket
 from flask import Flask, jsonify
 import threading
 
 app = Flask(__name__)
-scanner = nmap.PortScanner()
+# scanner = nmap.PortScanner()
 
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return render_template('index.html')
 
 @app.route("/scan", methods=['POST'])
 def scan():

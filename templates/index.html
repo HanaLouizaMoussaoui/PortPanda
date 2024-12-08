@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Port Panda</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+ <script src="../static/script.js"></script>
+    <div class="container">
+        <img src="/static/portPandaLogo.png" alt="Port Scanner Logo" style="display: block; margin: 0 auto; max-width: 200px;">
+        <form action="/scan" method="POST">
+            <div class="form-group">
+                <label for="protocol">Protocol</label>
+                <select id="protocol" name="protocol" required>
+                    <option value="TCP">TCP</option>
+                    <option value="UDP">UDP</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="start-port" id="start-port-label">Start Port</label>
+                <input type="number" id="start-port" name="start_port" min="1" max="65535" placeholder="1">
+            </div>
+
+            <div class="form-group">
+                <label for="end-port" id="end-port-label">End Port</label>
+                <input type="number" id="end-port" name="end_port" min="1" max="65535" placeholder="65535" required>
+            </div>
+
+
+            <div class="form-group" style="display: flex; align-items: center;">
+                <input type="checkbox" id="single-port" name="single_port" onclick="toggleSinglePort()">
+                <label for="single-port" style="margin-left: 5px;">I want to scan a single port</label>
+            </div>
+
+            <div class="form-group">
+                <label for="ip-range">Custom IP Range (Optional)</label>
+                <input type="text" id="ip-range" name="ip_range" placeholder="e.g., 192.168.1.1-192.168.1.255">
+            </div>
+
+            <button type="submit">Start Scan</button>
+        </form>
+    </div>
+
+
+</body>
+</html>
