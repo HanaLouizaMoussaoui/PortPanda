@@ -71,18 +71,22 @@ def scan_port(host, port, protocol):
             "error": str(e)
         })
 
-# Function to scan a range of ports
-def scan_range(hosts, start_port=1, end_port=65535, protocol='tcp'):
+def scan_range(hosts, ports, protocol='tcp'):
     for host in hosts:
         host_ip = socket.gethostbyname(host)
         results[host] = []
         threads = []
-        for port in range(start_port, end_port + 1):
-            # Create a new thread for each port scan
+
+        if isinstance(ports, str):
+            start_port, end_port = map(int, ports.split('-'))
+            ports = range(start_port, end_port + 1)
+        elif isinstance(ports, int):
+            ports = [ports]
+
+        for port in ports:
             thread = threading.Thread(target=scan_port, args=(host_ip, port, protocol))
             threads.append(thread)
             thread.start()
-        # Wait for all threads to complete
         for thread in threads:
             thread.join()
 
@@ -94,10 +98,13 @@ def scan_range(hosts, start_port=1, end_port=65535, protocol='tcp'):
 
         print(f"Scan results for {hostname} ({host}) on transport protocol {protocol.upper()}")
         results[host].append(get_target_os(host))
-        total_ports = end_port - start_port + 1
+        if len(ports) == 1:
+            total_ports = 1
+        else:
+            total_ports = end_port - start_port + 1
         open_ports = sum(1 for result in results[host] if "open" in result.get("state", ""))
         results[host].append({
-            "total_ports": total_ports,
+            "total_ports_scanned": total_ports,
             "open_ports": open_ports,
             "closed_ports": total_ports - open_ports})
         print(json.dumps(results[host], indent=2))
@@ -117,10 +124,6 @@ def grab_serv_version(sock, use_ssl=False):
         return banner
     except Exception as e:
         return f"Error grabbing banner: {e}"
-
-# Function to scan a single port
-# protocol will be obtained from form data on flask site
-
 
 def get_target_os(target):
     nm = nmap.PortScanner()
@@ -149,7 +152,6 @@ def reverse_dns_lookup(ip):
 
 if __name__ == "__main__":
     target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
-    start_port = 1000
-    end_port = 1050
-    scan_range(target_hosts, start_port, end_port, protocol='tcp')
+    ports = 1
+    scan_range(target_hosts, ports, protocol='tcp')
     #scan_range(target_hosts, start_port, end_port, protocol='udp')
