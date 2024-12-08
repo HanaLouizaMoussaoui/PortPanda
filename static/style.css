@@ -29,7 +29,7 @@ body {
 }
 .form-group input, .form-group select {
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -49,4 +49,11 @@ button {
 button:hover {
     color:  #010c17;
     background-color: #87888a;
+}
+li {
+font-weight: bold ;
+}
+
+p {
+font-size: 12px;
 }
