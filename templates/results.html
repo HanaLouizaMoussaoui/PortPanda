@@ -10,15 +10,25 @@
  <script src="../static/script2.js"></script>
     <div class="container">
         <img src="/static/portPandaLogo.png" alt="Port Scanner Logo" style="display: block; margin: 0 auto; max-width: 200px;">
-
-<input type="checkbox" id="single-port" name="single_port" onclick="displayResults()">
-<div id="results" style="margin-top: 20px;">
-    <h2>Scan Results</h2>
-    <div id="summary"></div>
-    <ul id="details"></ul>
-</div>
-    </div>
-
-
+        
+        <h1>Scan Results</h1>
+        
+        <div>
+            {% for host, scans in results.items() %}
+            <h2>Host: {{ host }}</h2>
+            <ul>
+                {% for scan in scans %}
+                <li>
+                    <strong>Port:</strong> {{ scan.port }}<br>
+                    <strong>Protocol:</strong> {{ scan.protocol }}<br>
+                    <strong>State:</strong> {{ scan.state }}<br>
+                    <strong>Service:</strong> {{ scan.service }}<br>
+                    <strong>Description:</strong> {{ scan.description }}<br>
+                    <strong>Protocol Info:</strong> {{ scan.protocol_info }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div>
 </body>
 </html>
