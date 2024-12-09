@@ -15,6 +15,7 @@ def enhance_scan_results(scan_results):
 
     enhanced_results = {}
     for host, results in scan_results.items():
+        print("SCAN: ", scan_results)
         enhanced_results[host] = []
         for result in results:
             port = result.get('port', 'Unknown') #shows unknown if does not match
@@ -24,4 +25,6 @@ def enhance_scan_results(scan_results):
             result['hostname'] = socket.gethostbyaddr(host)[0]
             enhanced_results[host].append(result)
 
+
+    print("ENHANCED: ",enhanced_results)
     return enhanced_results

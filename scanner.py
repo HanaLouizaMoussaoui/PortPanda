@@ -4,6 +4,7 @@ import threading
 import nmap
 import json
 import subprocess
+import ipaddress
 
 results = {}
 
@@ -76,6 +77,8 @@ def scan_port(host, port, protocol):
 
 def scan_range(hosts, ports, protocol='tcp'):
     for host in hosts:
+        if not is_valid_ipv4_address(host):
+            host = socket.gethostbyname(host)
         host_ip = socket.gethostbyname(host)
         results[host] = []
         threads = []
@@ -107,7 +110,7 @@ def scan_range(hosts, ports, protocol='tcp'):
         else:
             total_ports = end_port - start_port + 1
 
-        open_ports = sum(1 for result in results.get(host, []) if "open" in result.get("state", ""))
+        open_ports = sum(1 for result in results.get(host, []) if isinstance(result, dict) and "open" in result.get("state", ""))
         
         results[host].append({
             "total_ports_scanned": total_ports,
@@ -181,6 +184,13 @@ def ping_scan(host):
             "protocol": "icmp",
             "error": str(e)
         })
+
+def is_valid_ipv4_address(address):
+    try:
+        ip = ipaddress.IPv4Address(address)
+        return True
+    except ipaddress.AddressValueError:
+        return False
 
 
 if __name__ == "__main__":

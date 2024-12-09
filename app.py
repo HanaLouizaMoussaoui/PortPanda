@@ -39,9 +39,7 @@ def scan():
         else:
             end_port = int(end_port)
 
-        
-        hosts = [socket.gethostbyname('www.megacorpone.com')]
-        
+        hosts_list = ip_range.split(',')
 
         if single_port:
             ports = end_port
@@ -56,14 +54,12 @@ def scan():
             ports = f"{start_port}-{end_port}"
 
         
-        results = scan_range(hosts, ports, protocol)
-        print(results)
+        results = scan_range(hosts_list, ports, protocol)
 
         open_ports_results = {}
         for host, host_results in results.items():
-            open_ports_results[host] = [result for result in host_results if 'open' in result.get('state', '')]
 
-        print(open_ports_results)
+            open_ports_results[host] = [result for result in host_results if isinstance(result,dict) and 'open' in result.get('state', '')]
 
         enhanced_results = enhance_scan_results(open_ports_results) # appends educational content to the results.
 
