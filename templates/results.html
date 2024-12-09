@@ -5,29 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Port Panda</title>
     <link rel="stylesheet" href="../static/style.css">
+    <style>
+        .port-container {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .navigation button {
+            padding: 10px;
+            font-size: 16px;
+            width: 80px;
+        }
+        .h1{
+            color: white;
+        }
+    </style>
 </head>
 <body>
+
     <div class="container">
         <img src="/static/portPandaLogo.png" alt="Port Scanner Logo" style="display: block; margin: 0 auto; max-width: 200px;">
-        
+
         <h1>Scan Results</h1>
-        
-        <div>
+
+        <div id="port-results">
             {% for host, scans in results.items() %}
-            <h2>Host: {{ host }}</h2>
-            <ul>
-                {% for scan in scans %}
-                <li>
-                    <strong>Port:</strong> {{ scan.port }}<br>
-                    <strong>Protocol:</strong> {{ scan.protocol }}<br>
-                    <strong>State:</strong> {{ scan.state }}<br>
-                    <strong>Service:</strong> {{ scan.service }}<br>
-                    <strong>Description:</strong> {{ scan.description }}<br>
-                    <strong>Protocol Info:</strong> {{ scan.protocol_info }}
-                </li>
-                {% endfor %}
-            </ul>
+                <h2>Host: {{ host }}</h2>
+                <div id="host-{{ loop.index }}" class="host">
+                    {% for scan in scans %}
+                        <div class="port-container" id="port-{{ loop.index }}">
+                            <h3>Port: {{ scan.port }}</h3>
+                            <ul>
+                                <li><strong>Port:</strong> {{ scan.port }}</li>
+                                <li><strong>Protocol:</strong> {{ scan.protocol }}</li>
+                                <li><strong>State:</strong> {{ scan.state }}</li>
+                                <li><strong>Service:</strong> {{ scan.service }}</li>
+                                <li><strong>Description:</strong> {{ scan.description }}</li>
+                                <li><strong>Protocol Info:</strong> {{ scan.protocol_info }}</li>
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
         </div>
+
+        <div class="navigation">
+            <button id="prev" onclick="navigate(-1)">Previous</button>
+            <button id="next" onclick="navigate(1)">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPortIndex = 0;
+        const portContainers = document.querySelectorAll('.port-container');
+
+        function showPort(index) {
+            portContainers.forEach(container => container.classList.remove('active'));
+            if (portContainers[index]) {
+                portContainers[index].classList.add('active');
+            }
+        }
+
+        function navigate(direction) {
+            currentPortIndex += direction;
+            if (currentPortIndex < 0) {
+                currentPortIndex = portContainers.Length - 1;
+            } else if (currentPortIndex >= portContainers.length) {
+                currentPortIndex = 0;
+            }
+            showPort(currentPortIndex);
+        }
+
+        showPort(currentPortIndex);
+    </script>
+
 </body>
 </html>
