@@ -112,7 +112,8 @@ def scan_range(hosts, ports, protocol='tcp'):
         results[host].append({
             "total_ports_scanned": total_ports,
             "open_ports": open_ports,
-            "closed_ports": total_ports - open_ports})
+            "closed_ports": total_ports - open_ports,
+            "hostname": hostname})
         print(json.dumps(results[host], indent=2))
     return results
 
@@ -182,8 +183,8 @@ def ping_scan(host):
         })
 
 
-# if __name__ == "__main__":
-#    target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
-#    ports = 1
-#    scan_range(target_hosts, ports, protocol='tcp')
-    #scan_range(target_hosts, start_port, end_port, protocol='udp')
+if __name__ == "__main__":
+    target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
+    ports = "1-100"
+    scan_range(target_hosts, ports, protocol='tcp')
+    #scan_range(target_hosts, ports, protocol='udp')

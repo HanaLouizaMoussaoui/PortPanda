@@ -1,3 +1,6 @@
+import socket
+
+
 def enhance_scan_results(scan_results):
     port_info = {
         22: "SSH (Secure Shell). Commonly used for security remote login.",
@@ -18,6 +21,7 @@ def enhance_scan_results(scan_results):
             protocol = result.get('protocol', 'Unknown').lower()
             result['description'] = port_info.get(port, "No additional information available.")
             result['protocol_info'] = protocol_info.get(protocol, "Unknown protocol.")
+            result['hostname'] = socket.gethostbyaddr(host)[0]
             enhanced_results[host].append(result)
 
     return enhanced_results

@@ -61,7 +61,7 @@ def scan():
 
         open_ports_results = {}
         for host, host_results in results.items():
-            open_ports_results[host] = [result for result in host_results if result.get('state') == 'open']
+            open_ports_results[host] = [result for result in host_results if 'open' in result.get('state', '')]
 
         print(open_ports_results)
 
