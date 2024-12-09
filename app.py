@@ -5,12 +5,16 @@ from flask import Flask, jsonify
 import threading
 
 app = Flask(__name__)
-# scanner = nmap.PortScanner()
+scanner = nmap.PortScanner()
 
 
 @app.route("/")
-def hello_world():
+def homepage():
     return render_template('index.html')
+
+@app.route("/results")
+def results():
+    return render_template('results.html')
 
 @app.route("/scan", methods=['POST'])
 def scan():
