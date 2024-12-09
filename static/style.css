@@ -1,3 +1,17 @@
+h2 {
+    color: #90d3fe;
+}
+
+img {
+    display: block;
+    margin: 0 auto; 
+    max-width: 200px;
+}
+
+label {
+    color: white;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -9,47 +23,56 @@ body {
     align-items: center;
     height: 100vh;
 }
+
 .container {
-    background: #b8bebf;
+    background: #367196;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 400px;
 }
+
 .container h1 {
     text-align: center;
 }
+
 .form-group {
     margin-bottom: 15px;
 }
+
 .form-group label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
+
 .form-group input, .form-group select {
-    width: 100%;
+    width: 97%;
     padding: 6px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 .form-group input[type="checkbox"] {
     width: auto;
 }
+
 button {
     width: 100%;
     padding: 10px;
-    background-color: #010c17;
+    background-color: #90d3fe;
     color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
 }
+
 button:hover {
-    color:  #010c17;
+    color:  #90d3fe;
     background-color: #87888a;
 }
+
 li {
 font-weight: bold ;
 }
@@ -57,3 +80,6 @@ font-weight: bold ;
 p {
 font-size: 12px;
 }
+
+
+

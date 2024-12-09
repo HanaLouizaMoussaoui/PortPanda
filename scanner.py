@@ -3,6 +3,7 @@ import ssl
 import threading
 import nmap
 import json
+import subprocess
 
 results = {}
 
@@ -57,6 +58,8 @@ def scan_port(host, port, protocol):
                     "protocol": "tcp",
                     "state": "closed"
                 })
+        #elif protocol.lower() == 'icmp':
+        #    ping_scan(host)
         else:
             results[host].append({
                 "port": port,
@@ -98,11 +101,14 @@ def scan_range(hosts, ports, protocol='tcp'):
 
         print(f"Scan results for {hostname} ({host}) on transport protocol {protocol.upper()}")
         results[host].append(get_target_os(host))
+
         if len(ports) == 1:
             total_ports = 1
         else:
             total_ports = end_port - start_port + 1
-        open_ports = sum(1 for result in results[host] if "open" in result.get("state", ""))
+
+        open_ports = sum(1 for result in results.get(host, []) if "open" in result.get("state", ""))
+        
         results[host].append({
             "total_ports_scanned": total_ports,
             "open_ports": open_ports,
@@ -148,10 +154,36 @@ def reverse_dns_lookup(ip):
         return hostname, aliases
     except Exception as e:
         return e
+    
+    
+def ping_scan(host):
+    try:
+        response = subprocess.run(
+            ['ping', '-c', '1', host],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        if response.returncode == 0:
+            results[host].append({
+                "protocol": "icmp",
+                "state": "reachable",
+                "message": "Host is reachable"
+            })
+        else:
+            results[host].append({
+                "protocol": "icmp",
+                "state": "unreachable",
+                "message": "Host is unreachable"
+            })
+    except Exception as e:
+        results[host].append({
+            "protocol": "icmp",
+            "error": str(e)
+        })
 
 
-if __name__ == "__main__":
-    target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
-    ports = 1
-    scan_range(target_hosts, ports, protocol='tcp')
+# if __name__ == "__main__":
+#    target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
+#    ports = 1
+#    scan_range(target_hosts, ports, protocol='tcp')
     #scan_range(target_hosts, start_port, end_port, protocol='udp')
