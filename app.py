@@ -56,19 +56,36 @@ def scan():
             ports = f"{start_port}-{end_port}"
 
         results = scan_range(hosts_list, ports, protocol)
-
         open_ports_results = {}
         for host, host_results in results.items():
             open_ports_results[host] = [result for result in host_results if
                                         isinstance(result, dict) and 'open' in result.get('state', '')]
+            os, accuracy = get_os_name_from_results(host_results)
+            open_ports_results[host].append({
+                "os_name": os,
+                "os_accuracy": accuracy
+
+            })
+            open_ports_results[host].append({
+                "closed_ports": get_closed_ports(host_results)
+            })
 
         enhanced_results = enhance_scan_results(open_ports_results)  # appends educational content to the results.
-
+        print("ENHANCED: ", enhanced_results)
         return render_template('results.html', results=enhanced_results)  # returning the results as a json object
 
     except Exception as e:
         return render_template('error.html', error=f"Exception {e} was thrown."), 500
 
+def get_os_name_from_results(scan_results):
+    for result in scan_results:
+        if isinstance(result, dict) and 'os_name' in result:
+            return result['os_name'], result['os_accuracy']
+
+def get_closed_ports(scan_results):
+     for result in scan_results:
+         if isinstance(result, dict) and 'closed_ports' in result:
+             return result['closed_ports']
 
 if __name__ == '__main__':
     app.run(debug=True)
