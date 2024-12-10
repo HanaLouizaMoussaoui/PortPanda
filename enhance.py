@@ -37,12 +37,16 @@ def enhance_scan_results(scan_results):
                 result['protocol_info'] = protocol_info.get(protocol, "No protocol information available.")
             
             # OS info & hostname append
-            if 'os_name' in result and int(result.get('os_accuracy', 0)) >= 80:
-                os_name = result.get('os_name', 'Unknown').lower()
-                result['os_info'] = os_info.get(os_name, "No OS information available." )
-                result['hostname'] = socket.gethostbyaddr(host)[0]
-            else:
-                result['hostname'] = socket.gethostbyaddr(host)[0]
+            try:
+                if 'os_name' in result and int(result.get('os_accuracy', 0)) >= 80:
+                    os_name = result.get('os_name', 'Unknown').lower()
+                    result['os_info'] = os_info.get(os_name, "No OS information available." )
+                    result['hostname'] = socket.gethostbyaddr(host)[0]
+                else:
+                    result['hostname'] = socket.gethostbyaddr(host)[0]
+            except Exception as e:
+                result['hostname'] = "Unknown hostname"
+                result['os_info'] = "No OS information available."
 
             enhanced_results[host].append(result)
 

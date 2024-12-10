@@ -66,6 +66,7 @@ def scan():
                 open_ports_results[host] = [result for result in host_results if
                     isinstance(result, dict) and 'open' in result.get('state', '')]
                 os, accuracy = get_os_name_from_results(host_results)
+
                 open_ports_results[host].append({
                     "os_name": os,
                     "os_accuracy": accuracy
@@ -87,6 +88,7 @@ def get_os_name_from_results(scan_results):
     for result in scan_results:
         if isinstance(result, dict) and 'os_name' in result:
             return result['os_name'], result['os_accuracy']
+    return "Unknown OS", 0
 
 def get_closed_ports(scan_results):
      for result in scan_results:
