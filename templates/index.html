@@ -16,6 +16,15 @@
 
     <div class="container">
         <img src="/static/portPandaLogo.png" alt="Port Scanner Logo">
+
+        <a href="https://github.com/TarynBeaupre/PortPanda">
+            <h1 id="port-panda">
+                <span id="white-text">Port</span>
+                <span id="black-text">Panda</span>
+            </h1>
+        </a>
+        
+
         <form action="/scan" method="POST">
             <div class="form-group">
                 <label for="protocol">Protocol</label>
@@ -32,18 +41,18 @@
 
             <div class="form-group">
                 <label for="end-port" id="end-port-label">End Port</label>
-                <input type="number" id="end-port" name="end_port" min="2" max="65535" placeholder="Default: 50, Max: 65535">
+                <input type="number" id="end-port" name="end_port" min="2" max="65535" placeholder="Default: 100, Max: 65535">
             </div>
 
             <div class="form-group" style="display: flex; align-items: center;">
                 <input type="checkbox" id="single-port" name="single_port" onclick="toggleSinglePort()">
-                <label for="single-port" style="margin-left: 5px;">I want to scan a single port</label>
+                <label for="single-port" style="margin-left: 5px; margin-top: 3px;">Scan a single port</label>
             </div>
 
             <div class="form-group">
-                <label for="ip-range">Custom IP/DNS addresses (Optional)</label>
+                <label for="ip-range">Custom IP/DNS addresses</label>
                 <p> Separate by commas, no spaces </p>
-                <input type="text" id="ip-range" name="ip_range" placeholder="127.0.0.1,192.168.1.1,www.google.com">
+                <input type="text" id="ip-range" name="ip_range" placeholder="www.megacorpone.com,8.8.8.8,www.google.com">
             </div>
 
             <button type="submit">Start Scan</button>

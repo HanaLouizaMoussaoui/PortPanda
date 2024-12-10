@@ -24,7 +24,7 @@ def enhance_scan_results(scan_results):
 
     enhanced_results = {}
     for host, results in scan_results.items():
-       # print("SCAN: ", scan_results)
+        print("SCAN: ", scan_results)
         enhanced_results[host] = []
 
         for result in results:
