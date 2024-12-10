@@ -59,8 +59,6 @@ def scan_port(host, port, protocol):
                     "protocol": "tcp",
                     "state": "closed"
                 })
-        #elif protocol.lower() == 'icmp':
-        #    ping_scan(host)
         else:
             results[host].append({
                 "port": port,
@@ -117,7 +115,7 @@ def scan_range(hosts, ports, protocol='tcp'):
             "open_ports": open_ports,
             "closed_ports": total_ports - open_ports,
             "hostname": hostname})
-        print(json.dumps(results[host], indent=2))
+        #print(json.dumps(results[host], indent=2))
     return results
 
 
@@ -159,31 +157,6 @@ def reverse_dns_lookup(ip):
     except Exception as e:
         return e
     
-    
-def ping_scan(host):
-    try:
-        response = subprocess.run(
-            ['ping', '-c', '1', host],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-        if response.returncode == 0:
-            results[host].append({
-                "protocol": "icmp",
-                "state": "reachable",
-                "message": "Host is reachable"
-            })
-        else:
-            results[host].append({
-                "protocol": "icmp",
-                "state": "unreachable",
-                "message": "Host is unreachable"
-            })
-    except Exception as e:
-        results[host].append({
-            "protocol": "icmp",
-            "error": str(e)
-        })
 
 def is_valid_ipv4_address(address):
     try:
@@ -191,10 +164,3 @@ def is_valid_ipv4_address(address):
         return True
     except ipaddress.AddressValueError:
         return False
-
-
-if __name__ == "__main__":
-    target_hosts = [socket.gethostbyname('www.megacorpone.com'), "192.168.2.31"]
-    ports = "1-100"
-    scan_range(target_hosts, ports, protocol='tcp')
-    #scan_range(target_hosts, ports, protocol='udp')

@@ -17,18 +17,19 @@
     <h1>Scan Results</h1>
 
     <div id="port-results">
-        {% if enhanced_results %}
+        {% if results %}
         <!-- Host dropdown list -->
         <label for="host-select">Select Host:</label>
         <select id="host-select" onchange="showHost()">
-            {% for host in enhanced_results.keys() %}
+            {% for host in results.keys() %}
             <option value="host-{{ loop.index }}">{{ host }}</option>
             {% endfor %}
         </select>
 
-        {% for host, scans in enhanced_results.items() %}
+        {% for host, scans in results.items() %}
         <div id="host-{{ loop.index }}" class="host" style="display: none;">
             <h2>Host: {{ host }}</h2>
+            
             {% if scans %}
             {% for scan in scans %}
             <div class="port-container" id="port-{{ loop.index }}">

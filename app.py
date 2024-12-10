@@ -25,14 +25,14 @@ def results():
 def scan():
     try:
         protocol = request.form.get('protocol', 'tcp').lower()  # default is tcp
-        start_port = request.form.get('start_port', '1')  # default is 1
-        end_port = request.form.get('end_port', '500')  # default is the max (65535)
+        start_port = request.form.get('start_port')
+        end_port = request.form.get('end_port')
         single_port = request.form.get('single_port', False)  # if user wants to scan only one port
         ip_range = request.form.get('ip_range', 'www.megacorpone.com')
 
-        # validating port inputs
+        # Validating port inputs
         if not start_port.strip().isdigit():
-            start_port = 1
+            start_port = 1 # default
         else:
             start_port = int(start_port)
 
@@ -41,8 +41,10 @@ def scan():
         else:
             end_port = int(end_port)
 
+        # Getting the host list
         hosts_list = ip_range.split(',')
-
+        
+        # Setting the port range
         if single_port:
             ports = end_port
         else:
@@ -55,23 +57,27 @@ def scan():
                 return render_template('error.html', error="Start port cannot be greater than end port."), 400
             ports = f"{start_port}-{end_port}"
 
+        # Scanning with the host, ports and protocol.
         results = scan_range(hosts_list, ports, protocol)
+
+        # Open port results
         open_ports_results = {}
         for host, host_results in results.items():
             open_ports_results[host] = [result for result in host_results if
-                                        isinstance(result, dict) and 'open' in result.get('state', '')]
+                isinstance(result, dict) and 'open' in result.get('state', '')]
             os, accuracy = get_os_name_from_results(host_results)
             open_ports_results[host].append({
                 "os_name": os,
                 "os_accuracy": accuracy
-
             })
             open_ports_results[host].append({
                 "closed_ports": get_closed_ports(host_results)
             })
 
         enhanced_results = enhance_scan_results(open_ports_results)  # appends educational content to the results.
-        print("ENHANCED: ", enhanced_results)
+        
+        #print("ENHANCED: ", enhanced_results)
+        
         return render_template('results.html', results=enhanced_results)  # returning the results as a json object
 
     except Exception as e:

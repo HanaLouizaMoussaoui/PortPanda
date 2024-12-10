@@ -1,6 +1,6 @@
 import socket
 
-
+# Enhance appends educational information to the results.
 def enhance_scan_results(scan_results):
     port_info = {
         22: "SSH (Secure Shell). Commonly used for security remote login.",
@@ -17,18 +17,31 @@ def enhance_scan_results(scan_results):
         'udp': "UDP is connectionless and is often used for real-time applications such as streaming a Youtube video."
     }
 
+    os_info = {
+        'linux 5.0 - 5.14': "Linux kernel versions from 5.0 to 5.14. Widely used in servers and embedded systems.",
+        
+    }
+
     enhanced_results = {}
     for host, results in scan_results.items():
-        print("SCAN: ", scan_results)
+       # print("SCAN: ", scan_results)
         enhanced_results[host] = []
-        for result in results:
-            port = result.get('port', 'Unknown') #shows unknown if does not match
-            protocol = result.get('protocol', 'Unknown').lower()
-            result['description'] = port_info.get(port, "No additional information available.")
-            result['protocol_info'] = protocol_info.get(protocol, "Unknown protocol.")
-            result['hostname'] = socket.gethostbyaddr(host)[0]
-            enhanced_results[host].append(result)
 
+        for result in results:
+            # Port info append
+            if 'port' in result:
+                port = result.get('port', 'Unknown')
+                protocol = result.get('protocol', 'Unknown').lower()
+                result['description'] = port_info.get(port, "No additional information available.")
+                result['protocol_info'] = protocol_info.get(protocol, "No protocol information available.")
+            
+            # OS info & hostname append
+            if 'os_name' in result and int(result.get('os_accuracy', 0)) >= 95:
+                os_name = result.get('os_name', 'Unknown').lower()
+                result['os_info'] = os_info.get(os_name, "No OS information available." )
+                result['hostname'] = socket.gethostbyaddr(host)[0]
+
+            enhanced_results[host].append(result)
 
     print("ENHANCED: ",enhanced_results)
     return enhanced_results
