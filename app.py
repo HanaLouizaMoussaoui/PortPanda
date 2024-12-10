@@ -2,27 +2,98 @@ from flask import Flask, request, jsonify, render_template
 import nmap
 import socket
 from flask import Flask, jsonify
+from scanner import scan_range, scan_port, get_target_os
+from enhance import enhance_scan_results
+
 import threading
 
 app = Flask(__name__)
-# scanner = nmap.PortScanner()
+scanner = nmap.PortScanner()
 
 
 @app.route("/")
-def hello_world():
+def homepage():
     return render_template('index.html')
+
+
+@app.route("/results")
+def results():
+    return render_template('results.html')
+
 
 @app.route("/scan", methods=['POST'])
 def scan():
-    data = request.json
-    target = data.get('target', '127.0.0.1') # target IP
-    ports = data.get('ports', '22-80') #the ports to be scanned
-    args = data.get('args', '-sS') #the scan type and arguments
-
     try:
-        results = scanner.scan(hosts=target, ports=ports, arguments=args) #using nmap library to configure the scan
-        return jsonify(results) #returning the results as a json object
+        protocol = request.form.get('protocol', 'tcp').lower()  # default is tcp
+        start_port = request.form.get('start_port')
+        end_port = request.form.get('end_port')
+        single_port = request.form.get('single_port', False)  # if user wants to scan only one port
+        ip_range = request.form.get('ip_range', 'www.megacorpone.com')
+
+        # Validating port inputs
+        if not start_port.strip().isdigit():
+            start_port = 1 # default
+        else:
+            start_port = int(start_port)
+
+        if not end_port.strip().isdigit():
+            end_port = 100  # default
+        else:
+            end_port = int(end_port)
+
+        # Getting the host list
+        hosts_list = ip_range.split(',')
+        
+        # Setting the port range
+        if single_port:
+            ports = end_port
+        else:
+            # making sure the port range entered is valid
+            if start_port < 1 or start_port > 65534:
+                return render_template('error.html', error="Start port must be between 1 and 65534."), 400
+            if end_port < 1 or end_port > 65535:
+                return render_template('error.html', error="End port must be between 1 and 65535."), 400
+            if start_port > end_port:
+                return render_template('error.html', error="Start port cannot be greater than end port."), 400
+            ports = f"{start_port}-{end_port}"
+
+        # Scanning with the host, ports and protocol.
+        results = scan_range(hosts_list, ports, protocol)
+        if results:
+            # Open port results
+            open_ports_results = {}
+            for host, host_results in results.items():
+                open_ports_results[host] = [result for result in host_results if
+                    isinstance(result, dict) and 'open' in result.get('state', '')]
+                os, accuracy = get_os_name_from_results(host_results)
+
+                open_ports_results[host].append({
+                    "os_name": os,
+                    "os_accuracy": accuracy
+                })
+                open_ports_results[host].append({
+                    "closed_ports": get_closed_ports(host_results)
+                })
+
+            enhanced_results = enhance_scan_results(open_ports_results)  # appends educational content to the results.
+        else:
+            return render_template('error.html', error="Scan was interrupted.")
+        
+        return render_template('results.html', results=enhanced_results)  # returning the results as a json object
+        
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return render_template('error.html', error=f"Exception {e} was thrown."), 500
+
+def get_os_name_from_results(scan_results):
+    for result in scan_results:
+        if isinstance(result, dict) and 'os_name' in result:
+            return result['os_name'], result['os_accuracy']
+    return "Unknown OS", 0
+
+def get_closed_ports(scan_results):
+     for result in scan_results:
+         if isinstance(result, dict) and 'closed_ports' in result:
+             return result['closed_ports']
+
 if __name__ == '__main__':
     app.run(debug=True)
