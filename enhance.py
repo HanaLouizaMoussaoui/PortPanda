@@ -20,6 +20,7 @@ def enhance_scan_results(scan_results):
 
     os_info = {
         'linux 5.0 - 5.14': "Linux kernel versions from 5.0 to 5.14. Widely used in servers and embedded systems.",
+        'linux 4.19 - 5.15': "Linux kernel versions from 4.19 to 5.15. Widely used in servers and embedded systems.",
         'apple macos 12 (monterey) (darwin 21.1.0 - 21.3.0)': "Apple macOS 12 (Monterey) introduced several security features and improvements such as App Privacy Report and an update to XProtect (Apple's built-in Antivirus)."
     }
 
@@ -44,6 +45,7 @@ def enhance_scan_results(scan_results):
                     result['hostname'] = socket.gethostbyaddr(host)[0]
                 else:
                     result['hostname'] = socket.gethostbyaddr(host)[0]
+                    result['os_info'] = "No OS details available."
             except Exception as e:
                 result['hostname'] = "Unknown hostname"
                 result['os_info'] = "No OS information available."

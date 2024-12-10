@@ -80,7 +80,7 @@ def scan():
             return render_template('error.html', error="Scan was interrupted.")
         
         return render_template('results.html', results=enhanced_results)  # returning the results as a json object
-
+        
     except Exception as e:
         return render_template('error.html', error=f"Exception {e} was thrown."), 500
 
