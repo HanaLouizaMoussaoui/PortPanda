@@ -6,84 +6,127 @@
     <title>Port Panda</title>
     <link rel="stylesheet" href="../static/style.css">
     <style>
-        .port-container {
-            display: none;
-        }
-        .active {
-            display: block;
-        }
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .navigation button {
-            padding: 10px;
-            font-size: 16px;
-            width: 80px;
-        }
-        .h1{
-            color: white;
-        }
+        
     </style>
 </head>
 <body>
-
     <div class="container">
         <img src="/static/portPandaLogo.png" alt="Port Scanner Logo" style="display: block; margin: 0 auto; max-width: 200px;">
 
         <h1>Scan Results</h1>
 
         <div id="port-results">
-            {% for host, scans in results.items() %}
-                <h2>Host: {{ host }}</h2>
-                <div id="host-{{ loop.index }}" class="host">
-                    {% for scan in scans %}
-                        <div class="port-container" id="port-{{ loop.index }}">
-                            <h3>Port: {{ scan.port }}</h3>
-                            <ul>
-                                <li><strong>Port:</strong> {{ scan.port }}</li>
-                                <li><strong>Protocol:</strong> {{ scan.protocol }}</li>
-                                <li><strong>State:</strong> {{ scan.state }}</li>
-                                <li><strong>Service:</strong> {{ scan.service }}</li>
-                                <li><strong>Description:</strong> {{ scan.description }}</li>
-                                <li><strong>Protocol Info:</strong> {{ scan.protocol_info }}</li>
-                            </ul>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endfor %}
+            {% if enhanced_results %}
+                <!-- Host dropdown list -->
+            <label for="host-select">Select Host:</label>
+            <select id="host-select" onchange="showHost()">
+                {% for host in enhanced_results.keys() %}
+                    <option value="host-{{ loop.index }}">{{ host }}</option>
+                {% endfor %}
+            </select>
+
+                {% for host, scans in enhanced_results.items() %}
+                    <div id="host-{{ loop.index }}" class="host" style="display: none;">
+                    <h2>Host: {{ host }}</h2>
+                        {% if scans %}
+                            {% for scan in scans %}
+                                <div class="port-container" id="port-{{ loop.index }}">
+                                    <h3>Port: {{ scan.port }}</h3>
+                                    <ul>
+                                        <li><strong>Port:</strong> {{ scan.port }}</li>
+                                        <li><strong>Protocol:</strong> {{ scan.protocol }}</li>
+                                        {% if scan.state == 'open' %}
+                                            <li><strong>State:</strong><span class="open-port">{{ scan.state }}</span></li>
+                                        {% else %}
+                                            <li"><strong>State:</strong><span class="closed-port">{{ scan.state }}</span></li>
+                                        {% endif %}
+                                        <li><strong>Service:</strong> {{ scan.service }}</li>
+                                        <li><strong>Description:</strong> {{ scan.description }}</li>
+                                        <li><strong>Protocol Info:</strong> {{ scan.protocol_info }}</li>
+                                    </ul>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No scan information found for this host.</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No information found.</p>
+            {% endif %}
         </div>
 
         <div class="navigation">
             <button id="prev" onclick="navigate(-1)">Previous</button>
+            <p id="page-count"></p>
             <button id="next" onclick="navigate(1)">Next</button>
         </div>
+        <button onclick="window.location.href = '/'">Start New Scan</button>
     </div>
 
     <script>
         let currentPortIndex = 0;
+        let currentHostIndex = 0;
         const portContainers = document.querySelectorAll('.port-container');
-
+        const pageCount = document.getElementById('page-count');
+    
+        //updates the page count at the bottom
+        function updatePageCount() {
+            const hosts = document.querySelectorAll('.host');
+            const activeHost = hosts[currentHostIndex]; // Get the currently active host
+            const portContainers = activeHost.querySelectorAll('.port-container'); // Get all ports for that host
+            const totalPages = portContainers.length;
+            pageCount.innerText = `Page ${currentPortIndex + 1} of ${totalPages}`
+        }
+    
         function showPort(index) {
+            const hosts = document.querySelectorAll('.host');
+            const activeHost = hosts[currentHostIndex];
+            const portContainers = activeHost.querySelectorAll('.port-container');
             portContainers.forEach(container => container.classList.remove('active'));
             if (portContainers[index]) {
                 portContainers[index].classList.add('active');
             }
         }
-
+    
+        // Page navigation
         function navigate(direction) {
             currentPortIndex += direction;
             if (currentPortIndex < 0) {
-                currentPortIndex = portContainers.Length - 1;
+                currentPortIndex = 0;
             } else if (currentPortIndex >= portContainers.length) {
                 currentPortIndex = 0;
             }
             showPort(currentPortIndex);
+            updatePageCount();
         }
-
+    
+        // runs on nitial load
         showPort(currentPortIndex);
+        updatePageCount();
+    
+        function showHost() {
+            const hostSelect = document.getElementById('host-select');
+            const selectedHost = hostSelect.value;
+            const hosts = document.querySelectorAll('.host');
+    
+            hosts.forEach(host => {
+                host.style.display = 'none';
+            });
+    
+            const activeHost = document.getElementById(selectedHost);
+            if (activeHost) {
+                activeHost.style.display = 'block'; // unhide selected host
+            }
+        }
+    
+        // Show the first host by default when the page first loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const hostSelect = document.getElementById('host-select');
+            if (hostSelect.value) {
+                showHost();
+            }
+        });
     </script>
-
 </body>
 </html>

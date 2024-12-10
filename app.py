@@ -39,7 +39,9 @@ def scan():
         else:
             end_port = int(end_port)
 
-        hosts_list = ip_range.split(',')
+        
+        hosts = [socket.gethostbyname('www.megacorpone.com'), socket.gethostbyname('www.google.com')]
+        
 
         if single_port:
             ports = end_port
@@ -54,7 +56,8 @@ def scan():
             ports = f"{start_port}-{end_port}"
 
         
-        results = scan_range(hosts_list, ports, protocol)
+        results = scan_range(hosts, ports, protocol)
+        print(results)
 
         open_ports_results = {}
         for host, host_results in results.items():
@@ -63,7 +66,7 @@ def scan():
 
         enhanced_results = enhance_scan_results(open_ports_results) # appends educational content to the results.
 
-        return render_template('results.html', results=enhanced_results) #returning the results as a json object
+        return render_template('results.html', enhanced_results=enhanced_results) #returning the results as a json object
 
     except Exception as e:
         return render_template('error.html', error=f"Exception {e} was thrown."), 500

@@ -4,8 +4,12 @@ import socket
 def enhance_scan_results(scan_results):
     port_info = {
         22: "SSH (Secure Shell). Commonly used for security remote login.",
+        25: "Port 25 is used by the Simple Mail Transfer Protocol (STMP) to send emails.",
         80: "HTTP (HyperText Transfer Protocol). Used for regular web traffic.",
-        443: "HTTPS (HyperText Transfer Protocol Secure). Used by encrypted web traffic."
+        135: "Associated with Microsoft RPC services and is often used for inter-process communication on Windows networks.",
+        139: "Server Message Block (SMB) protocol, that allows devices to talk to each other on the same network using TCP. SMB uses either port 139 or 445.",
+        443: "HTTPS (HyperText Transfer Protocol Secure). Used by encrypted web traffic.",
+        445: "Server Message Block (SMB) protocol,  that allows devices to talk to each other on the same network using TCP. SMB uses either port 139 or 445."
     }
 
     protocol_info = {

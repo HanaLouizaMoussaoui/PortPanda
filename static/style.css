@@ -12,6 +12,38 @@ label {
     color: white;
 }
 
+.open-port {
+    color: green;
+}
+
+.closed-port {
+    color: red;
+}
+
+.port-container {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.navigation button {
+    padding: 10px;
+    font-size: 16px;
+    width: 80px;
+}
+
+.h1{
+    color: white;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -79,7 +111,9 @@ font-weight: bold ;
 
 p {
 font-size: 12px;
+color: white;
 }
+
 h1 {
 color: white;
 }
