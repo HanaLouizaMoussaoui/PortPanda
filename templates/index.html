@@ -8,8 +8,14 @@
 </head>
 <body>
  <script src="../static/script.js"></script>
+     <div id="loading-popup">
+         <div class="loader"></div>
+        <p id="waitMessage">Scanning... please wait</p>
+
+    </div>
+
     <div class="container">
-        <img src="/static/portPandaLogo.png" alt="Port Scanner Logo" ">
+        <img src="/static/portPandaLogo.png" alt="Port Scanner Logo">
         <form action="/scan" method="POST">
             <div class="form-group">
                 <label for="protocol">Protocol</label>
@@ -29,7 +35,6 @@
                 <input type="number" id="end-port" name="end_port" min="2" max="65535" placeholder="Default: 50, Max: 65535">
             </div>
 
-
             <div class="form-group" style="display: flex; align-items: center;">
                 <input type="checkbox" id="single-port" name="single_port" onclick="toggleSinglePort()">
                 <label for="single-port" style="margin-left: 5px;">I want to scan a single port</label>
@@ -43,9 +48,6 @@
 
             <button type="submit">Start Scan</button>
         </form>
-
     </div>
-
-
 </body>
 </html>

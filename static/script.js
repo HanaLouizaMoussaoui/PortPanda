@@ -29,3 +29,20 @@
         }
 
 
+
+     document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+
+        // This is to show the pop up before we trigger the scan
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                document.getElementById("loading-popup").style.display = "flex";
+
+                setTimeout(() => {
+                    form.submit();
+                }, 100);
+            });
+        }
+    });
