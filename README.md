@@ -2,7 +2,7 @@
 
 _Made by Taryn Beaupre, Ryan Wiwcharyk and Hana Moussaoui._
 
-A simple port scanner with a web interface. Final project for Security course at John Abbott Cegep.
+A simple port scanner with a web interface. Final project for Security course at John Abbott Cegep. Made in Python and JavaScript.
 
 
 ## Routes
